@@ -1,5 +1,5 @@
 <template>
-  <div v-cloak>
+  <div v-cloak class="content">
     <myHead v-show="false" msg="发布项目" backgroundColor="#fff" hasBack="0"></myHead>
     <actionsheet v-model="show1" :menus="menus1" @on-click-menu="jumpToRelease"></actionsheet>
     <div v-if="hasProject=='yes'" class="content1">
@@ -32,19 +32,20 @@
         <p>合规对接 量大稳定</p> -->
         <div>
         <div class="item" v-for="item in 5">
-          <div class="left">
-            <p>49999</p>
-            <span>商品价格(元)</span>
+          <div class="title">
+            <span>中腾堡SJT-BL</span>
+            <span>3天发货</span>
           </div>
-          <div class="right">
-            <p>中腾堡SJT-BL</p>
+          <div class="item-con">
             <div>
-              <div>
-                <span>
-                比特币</span>
-                <i>|</i>
-                <span>币种</span>
-              </div>
+              <p>49999</p>
+              <span>商品价格(元)</span>
+            </div>
+            <div>
+              <p>比特币</p>
+              <span>币种</span>
+            </div>
+            <div>
               <img v-show="item.listStatus==1" src="./img/label_judge.png"/>
               <img v-show="item.listStatus==2" src="./img/label_online.png"/>
             </div>
@@ -95,20 +96,20 @@
 
           <img class="img-unpassed" v-show="item.listStatus==3" src="./img/label_unpassed.png"/>
 
-          <div class="left">
-            <p>49999</p>
-            <span>商品价格(元)</span>
+          <div class="title">
+            <span>中腾堡SJT-BL</span>
+            <span>3天发货</span>
           </div>
-          <div class="right">
-            <p>中腾堡SJT-BL</p>
+          <div class="item-con">
             <div>
-              <div>
-                <span>
-                比特币</span>
-                <i>|</i>
-                <span>币种</span>
-              </div>
-              
+              <p>49999</p>
+              <span>商品价格(元)</span>
+            </div>
+            <div>
+              <p>比特币</p>
+              <span>币种</span>
+            </div>
+            <div>
               <img v-show="item.listStatus==4" src="./img/label_timeup.png"/>
             </div>
           </div>
@@ -321,6 +322,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  .content{
+    background: #EFEFF4;
+  }
+
   .img-unpassed{
     width: 4.53rem;
     height: 3.7rem;
@@ -387,7 +392,7 @@ export default {
   .fund-item-con,.assets-item-con{
     position:relative;
     box-sizing:border-box;
-    padding: 1.44rem 0.97rem 0;
+    /*padding: 1.44rem 0.97rem 0;*/
     .item_add{
       width:4rem;
       height:2rem;
@@ -411,13 +416,68 @@ export default {
       margin-bottom: 1rem;
     }
     .item{
+      background: #fff;
+      margin-top: 0.5rem;
       position:relative;
-      padding:1.065rem 0;
-      display:flex;
-      justify-content:space-between;
-      border-bottom:dashed 2px #e5e5e5;
-      &:last-child{border-bottom:solid 2px #fff;}
-      >div{
+      padding:0 1rem;
+      /*display:flex;
+      justify-content:space-between;*/
+     /* border-bottom:dashed 2px #e5e5e5;*/
+      &:last-child{border-bottom:solid 2px #fff;
+    }
+    .title{
+      height: 2.125rem;
+      line-height: 2.125rem;
+      border-bottom:solid 1px #e5e5e5;
+    }
+    .title span:nth-of-type(1){
+      font-size: 0.875rem;
+      color: #1A1A1A;
+      float: left;
+    }
+    .title span:nth-of-type(2){
+      font-size: 0.815rem;
+      color: #4083FF;
+      float: right;
+    }
+    .item-con{
+      display: flex;
+    }
+    .item-con div:nth-of-type(1){
+      flex: 1;
+      text-align: left;
+    }
+    .item-con div:nth-of-type(1) p{
+        font-size: 1.19rem;
+        color: #FC743F;
+        margin:1.35rem 0 0.9rem 0;
+    }
+    .item-con div:nth-of-type(1) span{
+      font-size: 0.75rem;
+      color: #A3A3A3;
+      margin-bottom: 0.94rem;
+      display: inline-block;
+    }
+    .item-con div:nth-of-type(2){
+      flex: 1;
+      text-align: center;
+    }
+    .item-con div:nth-of-type(2) p{
+      font-size: 0.875rem;
+      color: #000;
+      margin:1.35rem 0 1.19rem 0;
+    }
+    .item-con div:nth-of-type(2) span{
+      font-size: 0.75rem;
+      color: #A3A3A3;
+      margin-bottom: 0.94rem;
+      display: inline-block;
+    }
+    .item-con div:nth-of-type(3){
+      flex: 1;
+      text-align: right;
+    }
+     /* >div{
         display:flex;
         flex-direction:column;
         justify-content:space-between;
@@ -463,7 +523,7 @@ export default {
             height: 1.15rem;
           }
         }
-      }
+      }*/
     }
     .seeAll{
       width:21.565rem;

@@ -12,9 +12,9 @@
       </div>
       <div class="zj">
         <div class="zj-head">
-        <div @click="chooseType('.type0')">全部
+       <!-- <div @click="chooseType('.type0')">全部
             <img src="./img/arrow_type_nor.png" alt="" class="arrow-down">
-         </div>
+         </div>-->
          <div @click="sortFund(1)" :class="isAsc_fund_time?'active':''">时间
           <img v-show="!isAsc_fund_time" src="./img/ic_arrow_down.png" alt="">
           <img v-show="isAsc_fund_time" src="./img/arrow_up.png" alt="">
@@ -23,10 +23,10 @@
            <img v-show="!isAsc" src="./img/ic_arrow_down.png" alt="">
            <img v-show="isAsc" src="./img/arrow_up.png" alt="">
          </div> -->
-         <div @click="chooseType('.type1')">规模
+         <div @click="chooseType('.type1')">币种
             <img src="./img/arrow_type_nor.png" alt="" class="arrow-down">
          </div>
-         <div @click="chooseType('.type2')">类型
+         <div @click="chooseType('.type2')">托管
             <img src="./img/arrow_type_nor.png" alt="" class="arrow-down">
             <!--<img v-show="key == 1" src="./img/arrow_type_sel.png" alt="">-->
          </div>
@@ -51,8 +51,8 @@
           </div>
         </div>
         <div class="type type1">
-          <span class="angle" style="right:7.7rem"><img src="./img/tri-angle.png" alt=""></span>
-          <div class="type-head">规模类型</div>
+          <span class="angle" style="right:9.5rem"><img src="./img/tri-angle.png" alt=""></span>
+          <div class="type-head">币种类型</div>
           <div class="types">
             <label v-for="item in fundAmountList">
               <input v-model="fundAnmountType" type="checkbox" :value="item.key" />{{item.label}}
@@ -66,7 +66,7 @@
 
         <div class="type type2">
           <span class="angle"><img src="./img/tri-angle.png" alt=""></span>
-          <div class="type-head">产品类型</div>
+          <div class="type-head">托管类型</div>
           <div class="types">
             <label v-for="item in fundTypeList">
               <input v-model="fundType" type="checkbox" :value="item.key" />{{item.label}}
@@ -88,7 +88,7 @@
             </div>
             <div class="item-main">
               <div class="left">
-                <p>{{item.fundCostRegionFrom}}<span>%</span> - {{item.fundCostRegionTo}}<span>%</span></p>
+                <p>49999</p> <!--{{item.fundCostRegionFrom}}<span>%</span> - {{item.fundCostRegionTo}}<span>%</span>-->
                 <p>商品价格(元)</p>
               </div>
               <div class="right">
@@ -428,9 +428,9 @@ export default {
           position: relative;
           img{
             width: 0.315rem;
-            height: 0.565rem;
+            height: 0.25rem;
             position: absolute;
-            top: 0.4rem;
+            top: 0.6rem;
             right:1.15rem;
           }
         }
@@ -455,9 +455,9 @@ export default {
           position: relative;
           img{
             width: 0.315rem;
-            height: 0.25rem;
+            height: 0.5rem;
             position: absolute;
-            top: 0.6rem;
+            top: 0.5rem;
             right: 1.2rem;
           }
         }

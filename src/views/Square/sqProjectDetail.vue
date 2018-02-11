@@ -5,8 +5,12 @@
     <div class="project-head">
       <myHead :msg="'项目详情'" backgroundColor="#fff"></myHead>
       <div class="con">
-        <p class="p1">人众资金 第031号</p>
-        <p class="p3">商品价格(元)</p>
+        <p class="p1"><span class="p1-line"></span>人众资金 第031号</p>
+        <p class="p3">
+          <span class="p3-line-l"></span>
+          商品价格(元)
+          <span class="p3-line-r"></span>
+        </p>
         <p class="p2">49999</p>
         <div class="project-des">
           <div class="item">
@@ -486,6 +490,33 @@ export default {
 body{
   padding-bottom:0 !important;
 }
+.p1-line{
+  display: inline-block;
+  width: 0.125rem;
+  height: 0.875rem;
+  background: #4083FF;
+  margin-right: 0.5rem;
+}
+.p3-line-l{
+  display: inline-block;
+  width: 1rem;
+  height: 0.065rem;
+  background: #999;
+  position: absolute;
+  left: 8rem;
+  top: 0.5rem;
+}
+.p3-line-r{
+  display: inline-block;
+  width: 1rem;
+  height: 0.065rem;
+  background: #999;
+  position: absolute;
+  right: 8rem;
+  top: 0.5rem;
+}
+
+
 .alert-erweima{
   display: none;
   width: 100%;
@@ -555,8 +586,8 @@ body{
   color: #fff;
 }
 .con .p1{
-  font-size: 1rem;
-  margin:1rem 0 1.6rem 0;
+  font-size: 0.94rem;
+  margin:1rem 0 1.6rem 1.625rem;
   color: #333;
   text-align: left;
 }
@@ -565,9 +596,10 @@ body{
   color: #666;
 }
 .con .p3{
-  font-size: 1rem;
+  font-size: 0.75rem;
   color: #666;
   margin-bottom: 1rem;
+  position: relative;
 }
 .project-des{
   display: flex;
@@ -579,12 +611,12 @@ body{
   width: 0;
 }
 .project-des .item p:nth-of-type(1){
-  font-size: 1rem;
+  font-size: 0.75rem;
   color: #ababab;
   border-right: 1px solid #fff;
 }
 .project-des .item p:nth-of-type(2){
-  font-size: 1rem;
+  font-size: 0.875rem;
   color:#333;
 }
 .project-main{
