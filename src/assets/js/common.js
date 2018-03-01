@@ -126,11 +126,15 @@ var Rxports = {
 
     /** 输入起始日期和有效天数，返回剩余天数 */
     getCountDownDay:function (beginDate){
-      console.log(beginDate)
+      if(beginDate==null){
+        return 'null';
+      }else{
+        
         var now = new Date();
         var beginDate = new Date(beginDate.replace(/-/g,'/'));
         var pastDays = parseInt((now - beginDate)  /  1000  /  60  /  60  /24);
         return (localStorage.validPeriod - pastDays) ;
+      }
     },
 	/* wb add end */
 
@@ -321,10 +325,10 @@ Rxports.ajax({
     }
 });
 //获得矿机上线时间
-Rxports.ajax({
+/*Rxports.ajax({
     url:'/dict/getDict',
     data:{
-      'dictName':'unlistPeriod'
+      'dictName':'unlistPeriodMine'
     },
     success:function (res) {
       localStorage.unlistPeriod = JSON.stringify(res.data);
@@ -332,7 +336,8 @@ Rxports.ajax({
     error:function(err){
       console.error(err);
     }
-});
+});*/
+localStorage.validPeriod = '30';//暂无此字典，先写死
 export default Rxports;
 
 

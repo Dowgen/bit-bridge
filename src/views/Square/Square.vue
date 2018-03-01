@@ -100,7 +100,7 @@
                 </div>
                 <div>
                   <p></p>
-                  <p>现货？期货？</p>
+                  <p>{{getLabel_arrival(item.arrivalTimeType)}}</p>
                   <p>{{ item.listTime?getCountDownDay(item.listTime):'null' }} <span>天</span></p>
                 </div>
               </div>
@@ -322,7 +322,14 @@ export default {
     getLabel(key){
       var f = JSON.parse(localStorage.coinTypeList);
       for(let i in f){
-        if(f[i].key == key) return f[i].label
+        if(f[i].key == parseInt(key)) return f[i].label
+      }
+    },
+    //到货时间类型数字转化为文字
+    getLabel_arrival(key){
+      var f = JSON.parse(localStorage.arrivalTimeTypeList);
+      for(let i in f){
+        if(f[i].key == parseInt(key)) return f[i].label
       }
     }
   }

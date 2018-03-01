@@ -205,8 +205,8 @@ export default {
     }
   },
   watch:{
-    productStatus(){
-      console.log(this.productStatus);
+    arrivalTimeType(){
+      console.log(this.arrivalTimeType);
     }
   },
   mounted(){
