@@ -125,11 +125,12 @@ var Rxports = {
     },
 
     /** 输入起始日期和有效天数，返回剩余天数 */
-    getCountDownDay:function (beginDate,efDay){
+    getCountDownDay:function (beginDate){
+      console.log(beginDate)
         var now = new Date();
         var beginDate = new Date(beginDate.replace(/-/g,'/'));
         var pastDays = parseInt((now - beginDate)  /  1000  /  60  /  60  /24);
-        return (efDay - pastDays) ;
+        return (localStorage.validPeriod - pastDays) ;
     },
 	/* wb add end */
 
@@ -170,7 +171,7 @@ var Rxports = {
       },
 			// `baseURL` 将自动加在 `url` 前面，除非 `url` 是一个绝对 URL。
   		// 它可以通过设置一个 `baseURL` 便于为 axios 实例的方法传递相对 URL
-			baseURL: apiDomain + '/finbridge-base',
+			baseURL: apiDomain + '/finbridge-mine',
 			timeout: opts.timeout || 0,
 			responseType: opts.dataType || 'json'
 		}).then(function(res){
@@ -280,49 +281,58 @@ var Rxports = {
         });
     }
 };
-//获得用户平台类型列表
+//获得产品状态列表
 Rxports.ajax({
     url:'/dict/getDict',
     data:{
-      'dictName':'userType'
+      'dictName':'productStatus'
     },
     success:function (res) {
-      localStorage.userType = JSON.stringify(res.data);
+      localStorage.productStatusList = JSON.stringify(res.data);
     },
     error:function(err){
       console.error(err);
     }
 });
-//获得资金规模类型列表
+//获得到货时间类型列表
 Rxports.ajax({
     url:'/dict/getDict',
     data:{
-      'dictName':'fundAmount'
+      'dictName':'arrivalTimeType'
     },
     success:function (res) {
-      localStorage.fundAmountList = JSON.stringify(res.data);
+      localStorage.arrivalTimeTypeList = JSON.stringify(res.data);
     },
     error:function(err){
       console.error(err);
     }
 });
-
-// 获得资金资产统一的失效天数
+//获得币种类型列表
 Rxports.ajax({
-  url:'/config/getConfigByParameter',
-  data:{
-    'key':'unlistPeriod'
-  },
-  success:function (res) {
-    localStorage.validPeriod = res.data[0].value;
-    /*console.log(111111);
-    console.log(self.validPeriod);*/
-  },
-  error:function(err){
-    console.error(err);
-  }
+    url:'/dict/getDict',
+    data:{
+      'dictName':'coinType'
+    },
+    success:function (res) {
+      localStorage.coinTypeList = JSON.stringify(res.data);
+    },
+    error:function(err){
+      console.error(err);
+    }
 });
-
+//获得矿机上线时间
+Rxports.ajax({
+    url:'/dict/getDict',
+    data:{
+      'dictName':'unlistPeriod'
+    },
+    success:function (res) {
+      localStorage.unlistPeriod = JSON.stringify(res.data);
+    },
+    error:function(err){
+      console.error(err);
+    }
+});
 export default Rxports;
 
 

@@ -12,40 +12,21 @@
           <span @click="lookMore">查看更多<img src="./img/icon_more.png"/></span>
         </p>
        <div class="recommend-con">
-         <div @click="jumpToDetai(1,RcmZc.assetId)" class="zc con-item" style="margin-right: 0.1575rem;">
-           <h4>{{RcmZc.projectName}}</h4>
-           <p>倒计时{{countDownDay1}}天</p>
+         <div @click="jumpToDetai(1,RcmMine.mineId)" class="zc con-item" style="margin-right: 0.1575rem;" v-for="RcmMine in RcmMineList">
+           <h4>{{RcmMine.nameAndVersion}}</h4>
+           <p>倒计时{{getCountDownDay(RcmMine.listTime)}}天</p>
            <p>
-             <span v-if="RcmZc.productType">{{getLabel(RcmZc.productType,'asset')}}</span>
+             <span v-if="RcmMine.coinType">{{getLabel(RcmMine.coinType)}}</span>
            </p>
            <p>
-             <span>{{RcmZc.fundCostRegionFrom}}-{{RcmZc.fundCostRegionTo}}%</span>
+             <span>{{RcmMine.price}}</span>
              <span>
-                {{ String(parseInt(RcmZc.totalPayAmount)).length >= 5 ? RcmZc.totalPayAmount/10000 : RcmZc.totalPayAmount}} 
-                {{ String(parseInt(RcmZc.totalPayAmount)).length >= 5 ? '亿元' : '万元'}}
+                
              </span>
            </p>
            <p>
              <span>资金成本区间</span>
-             <span>总放款量</span>
-           </p>
-           <!-- <span class="middleLine"></span> -->
-         </div>
-         <div @click="jumpToDetai(2,RcmZj.fundId)" class="zj con-item" style="margin-left: 0.1575rem;">
-           <h4>{{RcmZj.projectName}}</h4>
-           <p>倒计时{{countDownDay2}}天</p>
-           <p>
-             <span v-if="RcmZj.fundType">{{getLabel(RcmZj.fundType,'fund')}}</span>
-           </p>
-           <p>
-             <span>{{RcmZj.fundCostRegionFrom}}-{{RcmZj.fundCostRegionTo}}%</span>
-             <span>
-                {{ getFundAmountType(RcmZj.fundAnmount)}} 
-             </span>
-           </p>
-           <p>
-             <span>资金成本区间</span>
-             <span>资金规模</span>
+             <span></span>
            </p>
            <!-- <span class="middleLine"></span> -->
          </div>
@@ -77,10 +58,10 @@
       <div class="suspend" @click="showErweima">
         <img src="./img/half-erwaima.png" alt="">
       </div>
-      <div class="alert-erweima">
+      <!-- <div class="alert-erweima">
         <img src="./img/alert-erweima.png" alt="">
         <img src="./img/close.png" alt="" @click="closeErweima">
-      </div>
+      </div> -->
 
     </div>
     <main-nav which="home"></main-nav>
@@ -108,20 +89,7 @@ export default {
   },
   data () {
     return {
-      RcmZc:{
-        projectName:'',
-        productType:'',
-        fundCostRegionFrom:'',
-        fundCostRegionTo:'',
-        totalPayAmount:''
-      },
-      RcmZj:{
-        projectName:'',
-        fundType:'',
-        fundCostRegionFrom:'',
-        fundCostRegionTo:'',
-        fundAnmount:''
-      },
+      RcmMineList:[],
       img_src:[],
       countDownDay1:'',
       countDownDay2:'',
@@ -132,15 +100,6 @@ export default {
       picLink:''
     }
   },
-/*  beforeRouteEnter(to, from, next) {
-    console.log(from.path =='/sqProjectDetail')
-    if(from.path =='/sqProjectDetail'){
-      to.meta.keepAlive = true;
-    }else{
-      to.meta.keepAlive = false;
-    }
-    next();
-  },*/
   mounted(){
     this.getToken();
     this.getWxSig();
@@ -159,38 +118,12 @@ export default {
         window.location.href = picLink;
       }
     },
-    getFundAmountType(key){
-      return Lib.M.getFundAmountType(key);
+    getCountDownDay(listTime){
+      return Lib.M.getCountDownDay(listTime);
     },
-    /*//拿到code传给后台获取用户的微信openId
-    getOpenId(){
-      let code = Lib.M.GetQueryString('code')
-      if(code!=null){
-        Lib.M.ajax({
-          url:'/wechat/getOpenId',
-          data:{
-            'code':code
-          },
-          success:function (res) {
-            if(res.code==200){
-              localStorage.openId = res.data.openId;
-            }else{
-              self.$vux.toast.text(res.error, 'middle');
-            }
-          },
-          error:function(err){
-            console.error(err);
-          }
-        });
-      }
-    },*/
-    //资金资产类型数字转化为文字
-    getLabel(key,type){
-      var f;
-      if(type=='fund')
-        f = JSON.parse(localStorage.fundTypeList);
-      else
-        f = JSON.parse(localStorage.assetTypeList);
+    //币种类型数字转化为文字
+    getLabel(key){
+      var f = JSON.parse(localStorage.coinTypeList);
       for(let i in f){
         if(f[i].key == key) return f[i].label
       }
@@ -222,9 +155,9 @@ export default {
         success:function(data){
           localStorage.token = data.access_token;
           /*self.getOpenId()*/
-          self.getFundList();
-          self.getConfigByParameter();
-          self.getArticle();
+          /*self.getCarouselFigure();*/
+          self.getRecommendZc();
+          /*self.getArticle();*/
         },
         error:function(err){
           console.error(err);
@@ -244,49 +177,19 @@ export default {
     lookMore(){
       this.$router.push('./Square')
     },
-    getConfigByParameter(){
-      var self = this;
-      Lib.M.ajax({
-        url:'/config/getConfigByParameter',
-        data:{
-          'key':'unlistPeriod'
-        },
-        success:function (res) {
-          self.validPeriod = res.data[0].value;
-          self.getRecommendZc();
-          self.getRecommendFund();
-          self.getCarouselFigure();
-
-        },
-        error:function(err){
-          console.error(err);
-        }
-      });
-    },
     getRecommendZc(){
       var self = this;
       Lib.M.ajax({
-        url : '/asset/getRecommendAsset',
+        url : '/mine/getRecommendMine',
         success:function(res){
-          var index = parseInt(Math.random()*res.data.length);
+          var data = res.data;
+          //推两个推荐矿机进RcmList
+          var index = parseInt(Math.random()*data.length);
+          self.RcmMineList.push(data.splice(index,1)[0]);
 
-          self.RcmZc = res.data[index];
-          self.countDownDay1 = Lib.M.getCountDownDay(res.data[index].listTime,self.validPeriod);
-        },
-        error:function(err){
-          console.error(err);
-        }
-      });
-    },
-    getRecommendFund(){
-      var self = this;
-      Lib.M.ajax({
-        url:'/fund/getRecommendFund',
-        success:function (res) {
-          var index = parseInt(Math.random()*res.data.length);
-
-          self.RcmZj = res.data[index];
-          self.countDownDay2 =Lib.M.getCountDownDay(res.data[index].listTime,self.validPeriod);
+          index = parseInt(Math.random()*data.length);
+          self.RcmMineList.push(data.splice(index,1)[0]);
+          console.log(self.RcmMineList[0])
         },
         error:function(err){
           console.error(err);
@@ -302,21 +205,6 @@ export default {
         },
         error:function(err){
           console.error(err);
-        }
-      });
-    },
-    /* 获取资金资产类型列表 */
-    getFundList(){
-      var self = this;
-      Lib.M.ajax({
-        url : '/info/findAssetAndFundConfig',
-        success:function(res){
-          if(res.code==200){
-            localStorage.fundTypeList=JSON.stringify(res.data.fund);
-            localStorage.assetTypeList = JSON.stringify(res.data.asset);
-          }else{
-            self.$vux.toast.text(res.error, 'middle');
-          }
         }
       });
     },

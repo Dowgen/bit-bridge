@@ -1,29 +1,24 @@
 <template>
-  <div class="project" v-if="$route.query.AorF==1">
+  <div class="project">
+    <!-- <div v-if="$route.query.AorF==1"> -->
     <div class="project-head">
-      <div class="head">
-        <span @click="$router.go(-1)" class="back"><img style=" width:0.72rem;height: 1.22rem;display: inline-block;" src="./img/back.png" alt=""></span>
-        <p>项目详情</p>
-      </div>
+      <myHead :msg="'项目详情'" backgroundColor="#fff"></myHead>
       <div class="con">
-        <p class="p1">{{info.projectName}}</p>
-        <p class="p2">{{info.fundCostRegionFrom}}-{{info.fundCostRegionTo}}</p>
-        <p class="p3">资金成本区间(%）</p>
+        <p class="p1"><span class="p1-line"></span>{{info.nameAndVersion}}</p>
+        <p class="p3">
+          <span class="p3-line-l"></span>
+          商品价格(元)
+          <span class="p3-line-r"></span>
+        </p>
+        <p class="p2">{{info.price}}</p>
         <div class="project-des">
           <div class="item">
-            <p>{{info.perAmount}}元</p>
-            <p>单笔额度</p>
+            <p>{{info.consume}}</p>
+            <p>消耗功率</p>
           </div>
           <div class="item">
-            <p>{{info.perPeriod}}</p>
-            <p>单笔期限</p>
-          </div>
-          <div class="item">
-            <p>
-              {{ String(parseInt(info.dailyPayAmount)).length >= 5 ? info.dailyPayAmount/10000 : info.dailyPayAmount}} 
-              {{ String(parseInt(info.dailyPayAmount)).length >= 5 ? '亿元' : '万元'}}
-            </p>
-            <p style="border: none;">日放款量</p>
+            <p>{{info.saleNum}}</p>
+            <p style="border: none;">起售数量</p>
           </div>
         </div>
       </div>
@@ -31,46 +26,44 @@
     <div class="project-main">
       <div class="main-item">
         <div>
-          <p>项目名称</p>
-          <p>{{info.projectName}}</p>
+          <p>币种</p>
+          <p>{{getLabel(info.nameAndVersion)}}</p>
         </div>
         <div>
-          <p>项目类型</p>
-          <p>{{getLabel(info.productType,'asset')}}</p><!---->
+          <p>到货时间</p>
+          <p>{{info.arrivalTime}}</p><!---->
         </div>
         <div>
-          <p>总放款量</p>
+          <p>产品状态</p>
           <p>
-           {{ String(parseInt(info.totalPayAmount)).length >= 5 ? info.totalPayAmount/10000 : info.totalPayAmount}} 
-              {{ String(parseInt(info.totalPayAmount)).length >= 5 ? '亿元' : '万元'}}
+           {{info.productStatus}}
           </p>
         </div>
         <div>
-          <p>坏账率</p>
-          <p>{{info.debtRate}}%</p>
+          <p>算力</p>
+          <p>{{info.calculateStress}}</p>
         </div>
         <div>
-          <p>产品名称</p>
-          <p>{{info.projectName}}</p>
+          <p>是否托管</p>
+          <p>{{convert(info.trusteeship)}}</p>
         </div>
         <div>
-          <p>产品概况</p>
-          <p>{{info.productFeature}}</p>
+          <p>产品介绍</p>
+          <p>{{info.productIntroduction}}</p>
         </div>
       </div>
     </div>
-
     <div class="project-main project-footer">
       <div class="main-item">
         <div>
-          <p>公司名称</p>
-          <p>{{info.companyName || '无'}}</p>
+          <p>售后</p>
+          <p style="word-wrap: break-word; word-break: break-all;">{{info.customerService}}</p>
         </div>
         <div>
-          <p>运营时间</p>
-          <p>{{info.operationTime}}个月</p>
+          <p>是否配有官方电源</p>
+          <p>{{convert(info.powerSupply)}}</p>
         </div>
-        <div>
+        <!-- <div>
           <p>资金来源</p>
           <p>{{getLabel(info.fundOrigin,'assest')}}</p>
         </div>
@@ -81,7 +74,7 @@
         <div>
           <p>公司背景</p>
           <p>{{info.companyBackground || '无'}}</p>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="project-main project-footer">
@@ -94,13 +87,15 @@
           <p>微信号</p>
           <p>{{info.contactWechat}}</p>
         </div>
-        <!-- <p>QQ号</p> -->
-        <!-- <p>{{info.contactQQ}}</p> -->
+        <div>
+          <p>QQ号</p>
+          <p>{{info.contactQQ}}</p>
+        </div>
       </div>
     </div>
     <div class="footer-btn" style="display: flex;flex-direction: row">
-      <div v-show="isLose == '0' && info.listStatus == 2" class="btn-left" style="flex-grow: 1" @click="click('offline')">下架</div>
-      <div v-show="isLose == '1'&& info.listStatus != 3" class="btn-left" style="flex-grow: 1" @click="shareTip">分享</div>
+      <div v-show="isLose == '0' && info.listStatus == 2" class="btn-right" style="flex-grow: 1" @click="click('offline')">下架</div>
+      <!-- <div v-show="isLose == '1'&& info.listStatus != 3" class="btn-left" style="flex-grow: 1" @click="shareTip">分享</div> -->
       <div v-show="isLose == '1'" class="btn-right" style="flex-grow: 1" @click="click('delete')">
         <img src="./img/delete.png" alt="" class="delete">
         删除
@@ -108,7 +103,7 @@
     </div>
   </div>
 
-  <div class="project" v-else-if="$route.query.AorF==2">
+  <!-- <div class="project" v-else-if="$route.query.AorF==2">
     <div class="project-head">
       <div class="head">
         <span @click="$router.go(-1)" class="back"><img style=" width:0.72rem;height: 1.22rem;display: inline-block;" src="./img/back.png" alt=""></span>
@@ -123,10 +118,10 @@
             <p>资金类型: {{getLabel(info.fundType,'fund')}}</p>
           </div>
           <div class="item">
-            <!-- <p>资金规模: 
+            <p>资金规模: 
               {{ String(parseInt(info.fundAnmount)).length >= 5 ? info.fundAnmount/10000 : info.fundAnmount}} 
               {{ String(parseInt(info.fundAnmount)).length >= 5 ? '亿元' : '万元'}}
-            </p> -->
+            </p>
             <p>资金规模:{{getFundAmountType(info.fundAnmount)}}</p>
           </div>
         </div>
@@ -162,8 +157,8 @@
           <p>微信号</p>
           <p>{{info.contactWechat}}</p>
         </div>
-        <!-- <p>QQ号</p> -->
-        <!-- <p>{{info.contactQQ}}</p> -->
+        <p>QQ号</p>
+        <p>{{info.contactQQ}}</p>
       </div>
     </div>
     <div class="footer-btn" style="display: flex;flex-direction: row">
@@ -174,17 +169,19 @@
         删除
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
 import Lib from '@/assets/js/Lib'
+import myHead from '@/components/myHead'
+import { Toast,Loading } from 'vux'
 import axios from 'axios'
 
 export default {
   name: 'ProjectDetail',
   components: {
-
+    Toast,Loading,myHead
   },
   data () {
     return {
@@ -217,9 +214,9 @@ export default {
         }
       });
     },*/
-    getFundAmountType(key){
+    /*getFundAmountType(key){
       return Lib.M.getFundAmountType(key);
-    },
+    },*/
     shareSuccess(){
       this.$vux.toast.show({
         showPositionValue: false,
@@ -251,8 +248,8 @@ export default {
     offline(){
       var self = this;
       Lib.M.ajax({
-        url : '/public/unListProject',
-        data:{unListId:self.AorF==1?self.info.assetId:self.info.fundId},
+        url : '/mine/unListMine',
+        data:{unListId:self.info.mineId},
         success:function(res){
           if(res.code==200){
             self.$vux.toast.text('下架成功!', 'middle');
@@ -267,8 +264,8 @@ export default {
     delete(){
       var self = this;
       Lib.M.ajax({
-        url : '/public/deleteOnListProject',
-        data:{deleteId:self.AorF==1?self.info.assetId:self.info.fundId},
+        url : '/mine/deleteOnListMine',
+        data:{deleteId:self.info.mineId},
         success:function(res){
           if(res.code==200){
             self.$vux.toast.text('删除成功!', 'middle');
@@ -280,7 +277,7 @@ export default {
       });
     }, 
     //分享
-    share(){
+    /*share(){
       var self = this;
       Lib.M.ajax({
         url : '/public/reListProject',
@@ -294,7 +291,7 @@ export default {
         }
       });
 
-    },
+    },*/
     //获取微信签名
     getWxSig(){
       var self = this;
@@ -315,12 +312,12 @@ export default {
             //微信分享设置
             wx.onMenuShareTimeline({
               title: self.info.projectName, 
-              link: Lib.M.webDomain + '?from=singlemessage' + '/#/sqProjectDetail?AorF=' + self.AorF
-                + '&proId=' + (self.AorF==1?self.info.assetId:self.info.fundId) 
+              link: Lib.M.webDomain + '?from=singlemessage' + '/#/sqProjectDetail?&proId=' + self.$route.query.proId
                 + '&fromShare=y', 
               imgUrl: Lib.M.webDomain+'/logo.png', 
               success: function () { 
-                if(self.isLose=='1' && self.info.listStatus== 4) self.share();
+                /*if(self.isLose=='1' && self.info.listStatus== 4) self.share();*/
+                self.shareSuccess();
               },
               cancel: function () { 
                   // 用户取消分享后执行的回调函数
@@ -330,14 +327,14 @@ export default {
             wx.onMenuShareAppMessage({
               title: self.info.projectName, 
               desc: '关注51资金资产公众号，获取更多信息', 
-              link: Lib.M.webDomain + '?from=singlemessage' + '/#/sqProjectDetail?AorF=' + self.AorF
-                + '&proId=' + (self.AorF==1?self.info.assetId:self.info.fundId)
+              link: Lib.M.webDomain + '?from=singlemessage' + '/#/sqProjectDetail?&proId=' + self.$route.query.proId
                 + '&fromShare=y',
               imgUrl: Lib.M.webDomain+'/logo.png', 
               /*type: '', // 分享类型,music、video或link，不填默认为link*/
               /*dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空*/
               success: function () { 
-                if(self.isLose=='1' && self.info.listStatus==4) self.share();
+                /*if(self.isLose=='1' && self.info.listStatus==4) self.share();*/
+                self.shareSuccess();
               },
               cancel: function () { 
                   // 用户取消分享后执行的回调函数
@@ -352,28 +349,12 @@ export default {
     //根据id查询详情
     getDetail(){
       var self = this;
-      var url = '', type2='', data={};
-      if(this.$route.query.AorF == 1){
-        type2='asset';
-        url = '/asset/findAssetById';
-        data = {
-          assetId: this.$route.query.proId,
-          hide: 0
-        }
-      }else if(this.$route.query.AorF == 2){
-        type2='fund';
-        url = '/fund/findFundById';
-        data = {
-          fundId: this.$route.query.proId,
-          hide: 0
-        }
-      } 
       Lib.M.ajax({
-        url : url,
-        data: data,
+        url :'/mine/findMineByMineId',
+        data: {mineId:self.$route.query.proId},
         success:function(res){
           if(res.code==200){
-            self.info = res.data[type2];
+            self.info = res.data;
             self.getWxSig();
           }else{
             self.$vux.toast.text(res.error, 'middle');
@@ -381,28 +362,17 @@ export default {
         }
       });
     },
-    //资金资产类型数字转化为文字
-    getLabel(key,type){
-      var f;
-      if(type=='fund')
-        f = JSON.parse(localStorage.fundTypeList);
-      else
-        f = JSON.parse(localStorage.assetTypeList);
-      if(typeof key == 'string'){
-        let array = [];
-        let keyArray = key.split(',');
-        for(let a in keyArray){
-          for(let i in f){
-            if(f[i].key == keyArray[a]) array.push(f[i].label)
-          }
-        }
-        return array.toString();
-      }else{
-        for(let i in f){
-          if(f[i].key == key) return f[i].label
-        }
+    //币种类型数字转化为文字
+    getLabel(key){
+      var f = JSON.parse(localStorage.coinTypeList);
+      for(let i in f){
+        if(f[i].key == key) return f[i].label
       }
-
+    },
+    //1是0否转换
+    convert(key){
+      if(key == '1') return '是'
+      else return '否'
     },
   }
 }
@@ -413,20 +383,82 @@ export default {
 body{
   padding-bottom:0 !important;
 }
-.project{
+.p1-line{
+  display: inline-block;
+  width: 0.125rem;
+  height: 0.875rem;
+  background: #4083FF;
+  margin-right: 0.5rem;
+}
+.p3-line-l{
+  display: inline-block;
+  width: 1rem;
+  height: 0.065rem;
+  background: #999;
+  position: absolute;
+  left: 8rem;
+  top: 0.5rem;
+}
+.p3-line-r{
+  display: inline-block;
+  width: 1rem;
+  height: 0.065rem;
+  background: #999;
+  position: absolute;
+  right: 8rem;
+  top: 0.5rem;
+}
+
+
+.alert-erweima{
+  display: none;
   width: 100%;
   height: 100%;
+  max-width: 640px;
   min-height: 40rem;
-  background: rgba(239,239,224,1);
+  background: rgba(0,0,0,0.8);
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+.alert-erweima img{
+  display: block;
+  margin: 0 auto;
+}
+.alert-erweima img:nth-of-type(1){
+  width:15.68rem;
+  height:20.63rem;
+  margin:8rem auto 3rem auto;
+}
+.alert-erweima img:nth-of-type(2){
+  width:3.32rem;
+  height:3.32rem;
+}
+.suspend{
+  width: 2.5rem;
+  height: 4.78rem;
+  position: fixed;
+  right: 0;
+  bottom: 6rem;
+}
+.suspend img{
+  width: 100%;
+  height: 100%;
+}
+.project{
   box-sizing:border-box;
+  width: 100%;
+  min-height: 40rem;
+  background: #fff;
   padding-bottom: 3.065rem;
 }
 .project-head{
   width: 100%;
-  height: 14.69rem;
-  background: url("./img/bg_details.png") no-repeat center;
+  height: 15.69rem;
+  background: #fff;
   background-size: 100% 100%;
   overflow: hidden;
+  color:#333;
 }
 .head{
   width: 100%;
@@ -444,19 +476,23 @@ body{
   left: 1.655rem;
 }
 .con p{
-  font-family:PingFangSC-Regular;
   color: #fff;
 }
 .con .p1{
   font-size: 0.94rem;
-  margin:1rem 0 1.6rem 0;
+  margin:1rem 0 1.6rem 1.625rem;
+  color: #333;
+  text-align: left;
 }
 .con .p2{
-  font-size: 1.44rem;
-  margin-bottom: 0.6rem;
+  font-size: 1.5rem;
+  color: #666;
 }
 .con .p3{
-  font-size: 0.815rem;
+  font-size: 0.75rem;
+  color: #666;
+  margin-bottom: 1rem;
+  position: relative;
 }
 .project-des{
   display: flex;
@@ -468,16 +504,19 @@ body{
   width: 0;
 }
 .project-des .item p:nth-of-type(1){
-  font-size: 0.875rem;
+  font-size: 0.75rem;
+  color: #ababab;
   border-right: 1px solid #fff;
 }
 .project-des .item p:nth-of-type(2){
-  font-size: 0.815rem;
+  font-size: 0.875rem;
+  color:#333;
 }
 .project-main{
   width: 100%;
   margin: 0 auto;
   background: #fff;
+  border-top: solid 0.625rem #d7d7d7;
 }
 .project-main .main-item{
   font-size: 0.875rem;
@@ -501,9 +540,11 @@ body{
   margin-left: 2rem;
 }
 .project-footer{
-  margin-top: 0.625rem;
+  border-top: solid 0.625rem #d7d7d7;
 }
 .footer-btn{
+  display: flex;
+  flex-direction: row;
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -514,15 +555,106 @@ body{
   line-height: 3.065rem;
   font-size: 1.065rem;
 }
-.btn-left{
+.btn-right{
+  flex:30;
   background: #4083FF ;
   font-size: 1.125rem;
   color: #fff;
 }
-.btn-right{
-  background: #fff;
+.btn-left{
+  background: url('./img/button_bg.png');
+  background-size: 100% 100%;
+  flex:16;
   font-size: 1.125rem;
   color: #B5B5B5;
+}
+.alert{
+  width: 100%;
+  height: 100%;
+  max-width: 640px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+}
+.alert .contactCard{
+  width: 14.815rem;
+  height: 21.5rem;
+  background: url("./img/contact_card_bg.png") no-repeat center;
+  background-size: 100% 100%;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  margin-left: -9.4075rem;
+  margin-top: -10.75rem;
+  text-align: left;
+  padding:0 2rem;
+}
+.alert .contactCard .name{
+  margin-top: 1.5rem;
+  margin-bottom: 4.5rem;
+  font-size: 1rem;
+  color: #fff;
+  position: relative;
+  text-indent: 2rem;
+}
+.alert .contactCard .name img{
+  display: inline-block;
+  width: 1.345rem;
+  height: 1.345rem;
+  position: absolute;
+  top: 0.05rem;
+  left: 0.2rem;
+}
+.contactWays{
+  font-size: 0.875rem;
+  color: #333333;
+  position: relative;
+  text-indent: 2.5rem;
+  line-height: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.contactWays p:nth-of-type(2){
+  color: #666;
+}
+.contactWays img{
+  display: inline-block;
+  width: 1.125rem;
+  height: 1rem;
+  position: absolute;
+  top: 0.05rem;
+  left: 0.2rem;
+}
+.contactWays img:nth-of-type(2){
+  width: 1.125rem;
+  height: 1.25rem;
+}
+.contactWays img:nth-of-type(3){
+  width: 1.25rem;
+  height: 1.03rem;
+}
+.foot-close{
+  width: 2.19rem;
+  height: 3.5rem;
+  position: absolute;
+  right: 1.5rem;
+  bottom: 0;
+}
+.foot-close img{
+  width: 100%;
+  height: 100%;
+}
+.enter-home{
+  position: fixed;
+  top: 6.5rem;
+  right: 0;
+  width: 5.655rem;
+  height: 2.065rem;
+}
+.enter-home img{
+  width: 100%;
+  height: 100%;
 }
 .delete{
   width: 0.94rem;

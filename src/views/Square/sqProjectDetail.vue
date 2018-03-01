@@ -5,21 +5,21 @@
     <div class="project-head">
       <myHead :msg="'项目详情'" backgroundColor="#fff"></myHead>
       <div class="con">
-        <p class="p1"><span class="p1-line"></span>人众资金 第031号</p>
+        <p class="p1"><span class="p1-line"></span>{{info.nameAndVersion}}</p>
         <p class="p3">
           <span class="p3-line-l"></span>
           商品价格(元)
           <span class="p3-line-r"></span>
         </p>
-        <p class="p2">49999</p>
+        <p class="p2">{{info.price}}</p>
         <div class="project-des">
           <div class="item">
-            <p>850瓦</p>
+            <p>{{info.consume}}</p>
             <p>消耗功率</p>
           </div>
           <div class="item">
-            <p>5台</p>
-            <p style="border: none;">起手数量</p>
+            <p>{{info.saleNum}}</p>
+            <p style="border: none;">起售数量</p>
           </div>
         </div>
       </div>
@@ -28,30 +28,29 @@
       <div class="main-item">
         <div>
           <p>币种</p>
-          <p>{{info.projectName}}</p>
+          <p>{{getLabel(info.nameAndVersion)}}</p>
         </div>
         <div>
           <p>到货时间</p>
-          <p v-if="fundTypeList">{{getLabel(info.productType,'asset')}}</p><!---->
+          <p>{{info.arrivalTime}}</p><!---->
         </div>
         <div>
           <p>产品状态</p>
           <p>
-           {{ String(parseInt(info.totalPayAmount)).length >= 5 ? info.totalPayAmount/10000 : info.totalPayAmount}} 
-              {{ String(parseInt(info.totalPayAmount)).length >= 5 ? '亿元' : '万元'}}
+           {{info.productStatus}}
           </p>
         </div>
         <div>
           <p>算力</p>
-          <p>{{info.debtRate}}%</p>
+          <p>{{info.calculateStress}}</p>
         </div>
         <div>
-          <p>有无托管</p>
-          <p>{{info.projectName}}</p>
+          <p>是否托管</p>
+          <p>{{convert(info.trusteeship)}}</p>
         </div>
         <div>
           <p>产品介绍</p>
-          <p>{{info.productFeature}}</p>
+          <p>{{info.productIntroduction}}</p>
         </div>
       </div>
     </div>
@@ -59,11 +58,11 @@
       <div class="main-item">
         <div>
           <p>售后</p>
-          <p>{{info.companyName || '无'}}</p>
+          <p style="word-wrap: break-word; word-break: break-all;">{{info.customerService}}</p>
         </div>
         <div>
           <p>是否配有官方电源</p>
-          <p>{{info.operationTime}}个月</p>
+          <p>{{convert(info.powerSupply)}}</p>
         </div>
         <!-- <div>
           <p>资金来源</p>
@@ -112,7 +111,7 @@
         <p>项目详情</p>
       </div>
       <div class="con">
-        <p class="p1">{{info.projectName}}</p>
+        <p class="p1">{{info.nameAndVersion}}</p>
         <p class="p2">{{info.fundCostRegionFrom}}-{{info.fundCostRegionTo}}</p>
         <p class="p3">资金成本区间(%）</p>
         <div class="project-des">
@@ -191,13 +190,13 @@
       </div>
     </div> -->
 
-    <div class="suspend" @click="showErweima" v-show="$route.query.fromShare == 'y'">
+    <!-- <div class="suspend" @click="showErweima" v-show="$route.query.fromShare == 'y'">
       <img src="./img/half-erwaima.png" alt="">
     </div>
     <div class="alert-erweima" v-show="$route.query.fromShare == 'y'">
       <img src="./img/alert-erweima.png" alt="">
       <img src="./img/close.png" alt="" @click="closeErweima">
-    </div>
+    </div> -->
 
     <!--进入主页-->
     <!-- <div class="enter-home" @click="enterMyInfo2">
@@ -236,17 +235,13 @@ export default {
     this.loading = true;
   },
   mounted(){
-    this.AorF = this.$route.query.AorF;
-
-    if(localStorage.userId!= undefined) this.hide = 0
-    this.getFundList();
     this.getDetail();
-    this.showErweima();
-    this.closeErweima();
+    /*this.showErweima();
+    this.closeErweima();*/
     /*this.getReturnLink();*/
   },
   methods:{
-    enterMyInfo2(){
+    /*enterMyInfo2(){
       console.log(this.info.belongTo)
       if(this.info.belongTo){
         this.$router.push({'path':'/MyInfo2',query:{
@@ -254,13 +249,13 @@ export default {
           }
         })
       }
-    },
-    showErweima(){
+    },*/
+    /*showErweima(){
       $('.alert-erweima').css('display','block')
     },
     closeErweima(){
       $('.alert-erweima').css('display','none')
-    },
+    },*/
     jumpTo(){
       window.location.href = Lib.M.webDomain;
     },
@@ -272,7 +267,7 @@ export default {
         position: 'middle'
       })
     },
-    shareOrNot(){
+    /*shareOrNot(){
       var self = this;
       Lib.M.ajax({
         url : '/user/findUserShareMap',
@@ -291,8 +286,8 @@ export default {
           }
         }
       });
-    },
-    shareProject(){
+    },*/
+    /*shareProject(){
       var self = this;
       Lib.M.ajax({
         url : '/user/addUserShareMap',
@@ -308,27 +303,13 @@ export default {
           }
         }
       });
-    },
-    /*getReturnLink(){
-      Lib.M.ajax({
-        url : '/config/getConfigByParameter',
-        data: {
-          key: 'wechatShareReturnLink'
-        },
-        success:function(res){
-          if(res.code==200){
-            sessionStorage.wechatShareReturnLink = res.data[0].value;
-          }else{
-            self.$vux.toast.text(res.error, 'middle');
-          }
-        }
-      });
     },*/
-    getFundAmountType(key){
+    /*getFundAmountType(key){
       return Lib.M.getFundAmountType(key);
-    },
+    },*/
     contactCard(){
-      var self = this;
+      $('.alert').css('display','block')
+      /*var self = this;
       if(localStorage.userId != undefined && localStorage.userId != 'undefined'){
         self.shareOrNot();
       }else{
@@ -338,47 +319,22 @@ export default {
             self.$router.push('Login')
           }
         })
-      }
+      }*/
     },
     closeContactCard(){
       $('.alert').css('display','none')
     },
-    /* 获取资金资产类型列表 */
-    getFundList(){
-      var self = this;
-      Lib.M.ajax({
-        url : '/info/findAssetAndFundConfig',
-        success:function(res){
-          if(res.code==200){
-            self.fundTypeList=res.data.fund;
-            self.assetTypeList = res.data.asset
-          }else{
-            self.$vux.toast.text(res.error, 'middle');
-          }
-        }
-      });
-    },
-    //资金资产类型数字转化为文字
-    getLabel(key,type){
-      var f;
-      if(type=='fund')
-        f = this.fundTypeList;
-      else
-        f = this.assetTypeList;
-      if(typeof key == 'string'){
-        let array = [];
-        let keyArray = key.split(',');
-        for(let a in keyArray){
-          for(let i in f){
-            if(f[i].key == keyArray[a]) array.push(f[i].label)
-          }
-        }
-        return array.toString();
-      }else{
-        for(let i in f){
-          if(f[i].key == key) return f[i].label
-        }
+     //币种类型数字转化为文字
+    getLabel(key){
+      var f = JSON.parse(localStorage.coinTypeList);
+      for(let i in f){
+        if(f[i].key == key) return f[i].label
       }
+    },
+    //1是0否转换
+    convert(key){
+      if(key == '1') return '是'
+      else return '否'
     },
     //获取微信签名
     getWxSig(){
@@ -400,17 +356,16 @@ export default {
             //微信分享设置
             wx.ready(function(){         
               wx.onMenuShareTimeline({
-                title: self.info.projectName, 
-                link: Lib.M.webDomain + '?from=singlemessage' + '/#/sqProjectDetail?AorF=' + self.AorF
-                  + '&proId=' + (self.AorF==1?self.info.assetId:self.info.fundId)
+                title: self.info.nameAndVersion, 
+                link: Lib.M.webDomain + '?from=singlemessage' + '/#/sqProjectDetail?&proId=' + self.$route.query.proId
                   + '&fromShare=y',
                 imgUrl: Lib.M.webDomain+'/logo.png', 
                 success: function () { 
-                  if(localStorage.userId != undefined && localStorage.userId != 'undefined'){
+                  /*if(localStorage.userId != undefined && localStorage.userId != 'undefined'){
                     self.shareProject();
-                  }else{
+                  }else{*/
                     self.shareSuccess();
-                  }
+                  /*}*/
                 },
                 cancel: function () { 
                     // 用户取消分享后执行的回调函数
@@ -418,21 +373,19 @@ export default {
               });
 
               wx.onMenuShareAppMessage({
-                title: self.info.projectName, 
+                title: self.info.nameAndVersion, 
                 desc: '关注51资金资产公众号，获取更多信息', 
-                link: Lib.M.webDomain + '?from=singlemessage' + '/#/sqProjectDetail?AorF=' + self.AorF
-                  + '&proId=' + (self.AorF==1?self.info.assetId:self.info.fundId)
+                link: Lib.M.webDomain + '?from=singlemessage' + '/#/sqProjectDetail?&proId=' + self.$route.query.proId
                   + '&fromShare=y',
                 imgUrl: Lib.M.webDomain+'/logo.png', 
                 /*type: '', // 分享类型,music、video或link，不填默认为link*/
                 /*dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空*/
                 success: function () { 
-                  if(localStorage.userId != undefined && localStorage.userId != 'undefined'){
+                  /*if(localStorage.userId != undefined && localStorage.userId != 'undefined'){
                     self.shareProject();
-                  }else{
+                  }else{*/
                     self.shareSuccess();
-                  }
-                  alert(link);
+                  /*}*/
                 },
                 cancel: function () { 
                     // 用户取消分享后执行的回调函数
@@ -450,27 +403,12 @@ export default {
     getDetail(){
       var self = this;
       var url = '',type2='', data={};
-      if(this.$route.query.AorF == 1){
-        type2='asset';
-        url = '/asset/findAssetById';
-        data = {
-          assetId: this.$route.query.proId,
-          hide: self.hide
-        }
-      }else if(this.$route.query.AorF == 2){
-        type2='fund';
-        url = '/fund/findFundById';
-        data = {
-          fundId: this.$route.query.proId,
-          hide: self.hide
-        }
-      } 
       Lib.M.ajax({
-        url : url,
-        data: data,
+        url :'/mine/findMineByMineId',
+        data: {mineId:self.$route.query.proId},
         success:function(res){
           if(res.code==200){
-            self.info = res.data[type2];
+            self.info = res.data;
             self.getWxSig();
           }else{
             self.$vux.toast.text(res.error, 'middle');
@@ -479,7 +417,7 @@ export default {
       });
     },
     callphone(phone){    
-        window.location.href = "tel:"+phone;
+      window.location.href = "tel:"+phone;
     }
   }
 }

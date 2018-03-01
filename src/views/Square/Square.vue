@@ -15,9 +15,9 @@
        <!-- <div @click="chooseType('.type0')">全部
             <img src="./img/arrow_type_nor.png" alt="" class="arrow-down">
          </div>-->
-         <div @click="sortFund(1)" :class="isAsc_fund_time?'active':''">时间
-          <img v-show="!isAsc_fund_time" src="./img/ic_arrow_down.png" alt="">
-          <img v-show="isAsc_fund_time" src="./img/arrow_up.png" alt="">
+         <div @click="sortMine(1)" :class="isAsc_time?'active':''">时间
+          <img v-show="!isAsc_time" src="./img/ic_arrow_down.png" alt="">
+          <img v-show="isAsc_time" src="./img/arrow_up.png" alt="">
          </div>
          <!-- <div @click="isActive_fund='total',isAsc?sort(2,1,2):sort(2,2,2)" :class="isActive_fund=='total'?'active':''">资金规模
            <img v-show="!isAsc" src="./img/ic_arrow_down.png" alt="">
@@ -31,7 +31,7 @@
             <!--<img v-show="key == 1" src="./img/arrow_type_sel.png" alt="">-->
          </div>
         </div>
-        <div class="type type0">
+        <!-- <div class="type type0">
           <span class="angle" style="right:19.5rem"><img src="./img/tri-angle.png" alt=""></span>
           <div class="type-head">全部</div>
           <div class="types">
@@ -49,13 +49,13 @@
             <span class="confirm" @click="confirmFund">确定</span>
             <span class="cancel" @click="cancel">取消</span>
           </div>
-        </div>
+        </div> -->
         <div class="type type1">
           <span class="angle" style="right:9.5rem"><img src="./img/tri-angle.png" alt=""></span>
           <div class="type-head">币种类型</div>
           <div class="types">
-            <label v-for="item in fundAmountList">
-              <input v-model="fundAnmountType" type="checkbox" :value="item.key" />{{item.label}}
+            <label v-for="item in coinTypeList">
+              <input v-model="coinType" type="checkbox" :value="item.key" />{{item.label}}
             </label>
           </div>
           <div class="btn">
@@ -68,8 +68,9 @@
           <span class="angle"><img src="./img/tri-angle.png" alt=""></span>
           <div class="type-head">托管类型</div>
           <div class="types">
-            <label v-for="item in fundTypeList">
-              <input v-model="fundType" type="checkbox" :value="item.key" />{{item.label}}
+            <label>
+              <input v-model="trusteeship" type="checkbox" value="1" />是
+              <input v-model="trusteeship" type="checkbox" value="0" />否
             </label>
           </div>
           <div class="btn">
@@ -78,24 +79,24 @@
           </div>
         </div>
         <div class="con">
-          <div @click="jumpToDetai(2,item.fundId)" class="con-item" v-for="(item,index) in items">
+          <div @click="jumpToDetai(item.mineId)" class="con-item" v-for="(item,index) in mineList">
             <img v-show="item.isAuth==1" src="./img/label_auth.png" class="label-auth">
             <div class="item-title">
               <span></span>
-              <span>{{item.projectName}}</span>
-              <img v-show="item.isRecommend==1" src="./img/label_recommend.png">
+              <span>{{item.nameAndVersion}}</span>
+              <!-- <img v-show="item.isRecommend==1" src="./img/label_recommend.png"> -->
               <p>立即购买</p>
             </div>
             <div class="item-main">
               <div class="left">
-                <p>49999</p> <!--{{item.fundCostRegionFrom}}<span>%</span> - {{item.fundCostRegionTo}}<span>%</span>-->
+                <p>{{item.price}}</p> <!--{{item.fundCostRegionFrom}}<span>%</span> - {{item.fundCostRegionTo}}<span>%</span>-->
                 <p>商品价格(元)</p>
               </div>
               <div class="right">
                 <div>
                   <p></p>
                   <p>币种</p>
-                  <p>{{getLabel(item.fundType,'fund')}}</p>
+                  <p>{{getLabel(item.coinType)}}</p>
                 </div>
                 <div>
                   <p></p>
@@ -158,7 +159,7 @@
           </div>
         </div>
         <div class="con">
-          <div @click="jumpToDetai(1,oItem.assetId)" class="con-item" v-for="oItem in oItems">
+          <div @click="jumpToDetai(1,oItem.assetId)" class="con-item" v-for="oItem in omineList">
           <img v-show="oItem.isAuth==1" src="./img/label_auth.png" class="label-auth">
             <div class="item-title">
               <span></span>
@@ -209,28 +210,17 @@ export default {
   },
   data () {
     return {
-      isActive: 'comprehension',
-      /*isActive_fund: 'active',*/
-      isAsc_asset_time:true,
-      isAsc_asset_total:true,
-      isAsc_fund_time:false,
-      /*zj:true,*/
+      /*isActive: 'comprehension',*/
+      isAsc_time:false,
       key:2,
-      items:[],
-      oItems:[],
-      recAuth_fund:'0',
-      recAuth_assest:'0',
-      fundAmountList:[],
-      fundAnmountType:[],
+      mineList:[],
+      /*recAuth_fund:'0',*/
+      coinTypeList:[],
+      coinType:[],
       validPeriod:'',
-      img_src:'',
       countDownDay:'',
       currentTime:'',
-      fundTypeList:[],
-      assetTypeList:[],
-      fundType:[],
-      assetType:[]
-
+      trusteeship:[],
     }
   },
   /*beforeRouteEnter(to, from, next) {
@@ -251,39 +241,35 @@ export default {
     next();
   },
   mounted(){
-    this.fundAmountList = JSON.parse(localStorage.fundAmountList);
-    this.sortFund();
-    this.sortAsset(1);
-    this.getFundList();
-
+    this.coinTypeList = JSON.parse(localStorage.coinTypeList);
+    this.sortMine();
   },
   methods: {
     chooseType(which){
       $(which).css('display','block');
       $(which).siblings(".type").css('display','none');
     },
-    confirmAsset(chooseType){
+    /*confirmAsset(chooseType){
       $('.type').css('display','none');
       this.sortAsset(chooseType);
-    },
+    },*/
     confirmFund(){
       $('.type').css('display','none');
-      this.sortFund();
+      this.sortMine();
     },
     cancel(){
       $('.type').css('display','none');
     },
     getCountDownDay(beginDate){
-      return Lib.M.getCountDownDay(beginDate, localStorage.validPeriod)
+      return Lib.M.getCountDownDay(beginDate)
     },
-    jumpToDetai(AorF,proId){
+    jumpToDetai(proId){
       this.$router.push({'path':'/sqProjectDetail',query:{
-          AorF:AorF,
           proId:proId
         }
       })
     },
-    sortAsset(chooseType){
+    /*sortAsset(chooseType){
       var self = this;
       var url = '/asset/sortAsset';
       var sortType = '';
@@ -304,60 +290,41 @@ export default {
           'type': self.assetType.toString(),
         },
         success:function (res) {
-          self.oItems = res.data;
+          self.omineList = res.data;
         },
         error:function(err){
           console.error(err);
         }
       });
-    },
-    sortFund(isSort){
+    },*/
+    sortMine(isSort){
       var self = this;
-      var url = '/fund/sortFund';
-      if(isSort==1) self.isAsc_fund_time = !self.isAsc_fund_time;
+      var url = '/mine/sortMine';
+      if(isSort==1) self.isAsc_time = !self.isAsc_time;
 
       Lib.M.ajax({
         url:url,
         data:{
-          'recAuth':self.recAuth_fund,
-          'fundAnmountType': self.fundAnmountType.toString(),
-          'sortType': self.isAsc_fund_time ?'asc':'desc',
-          'fundType': self.fundType.toString(),
+          /*'recAuth':self.recAuth_fund,*/
+          'sortType': self.isAsc_time ?'asc':'desc',
+          'coinType': self.coinType.toString(),
+          'trusteeship': self.trusteeship.toString(),
         },
         success:function (res) {
-           self.items = res.data;
+           self.mineList = res.data;
         },
         error:function(err){
           console.error(err);
         }
       });
     },
-    /* 获取资金资产类型列表 */
-    getFundList(){
-      var self = this;
-      Lib.M.ajax({
-        url : '/info/findAssetAndFundConfig',
-        success:function(res){
-          if(res.code==200){
-            self.fundTypeList=res.data.fund;
-            self.assetTypeList = res.data.asset
-          }else{
-            self.$vux.toast.text(res.error, 'middle');
-          }
-        }
-      });
-    },
-    //资金资产类型数字转化为文字
-    getLabel(key,type){
-      var f;
-      if(type=='fund')
-        f = JSON.parse(localStorage.fundTypeList);
-      else
-        f = JSON.parse(localStorage.assetTypeList);
+    //币种类型数字转化为文字
+    getLabel(key){
+      var f = JSON.parse(localStorage.coinTypeList);
       for(let i in f){
         if(f[i].key == key) return f[i].label
       }
-    },
+    }
   }
 }
 </script>
@@ -471,7 +438,7 @@ export default {
           position: relative;
           .item-title{
             display:flex;
-            align-items:center;
+            align-mineList:center;
             text-align: left;
             line-height: 2.315rem;
             font-size: 0.875rem;

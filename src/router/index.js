@@ -10,10 +10,8 @@ const NewsDetail = r => require.ensure([], () => r(require('@/views/Home/NewsDet
 const Square = r => require.ensure([], () => r(require('@/views/Square/Square')), 'Square')
 const sqProjectDetail = r => require.ensure([], () => r(require('@/views/Square/sqProjectDetail')), 'sqProjectDetail')
 const MyProject = r => require.ensure([], () => r(require('@/views/Release/MyProject')), 'MyProject')
-const ReleaseAssets = r => require.ensure([], () => r(require('@/views/Release/ReleaseAssets')), 'ReleaseAssets')
-const ReleaseFund = r => require.ensure([], () => r(require('@/views/Release/ReleaseFund')), 'ReleaseFund')
+const Release1 = r => require.ensure([], () => r(require('@/views/Release/Release1')), 'Release1')
 const Release2 = r => require.ensure([], () => r(require('@/views/Release/Release2')), 'Release2')
-const Release3 = r => require.ensure([], () => r(require('@/views/Release/Release3')), 'Release3')
 const ProjectDetail = r => require.ensure([], () => r(require('@/views/Release/ProjectDetail')), 'ProjectDetail')
 const MyInfo = r => require.ensure([], () => r(require('@/views/MyInfo/MyInfo')), 'MyInfo')
 const MyInfo2 = r => require.ensure([], () => r(require('@/views/MyInfo/MyInfo2')), 'MyInfo2')
@@ -82,17 +80,11 @@ const ReleaseRoutes = [
     path: '/MyProject',
     component: MyProject
   },{
-    path: '/ReleaseAssets',
-    component: ReleaseAssets
-  },{
-    path: '/ReleaseFund',
-    component: ReleaseFund
+    path: '/Release1',
+    component: Release1
   },{
     path: '/Release2',
     component: Release2
-  },{
-    path: '/Release3',
-    component: Release3
   },{
     path: '/ProjectDetail',
     component: ProjectDetail

@@ -2,7 +2,7 @@
   <div v-cloak class="content">
     <myHead v-show="false" msg="发布项目" backgroundColor="#fff" hasBack="0"></myHead>
     <actionsheet v-model="show1" :menus="menus1" @on-click-menu="jumpToRelease"></actionsheet>
-    <div v-if="hasProject=='yes'" class="content1">
+    <div v-if="hasProject=='no'" class="content1">
       <button-tab class="button-tab">
         <button-tab-item :selected="loseEfficacy=='0'" @on-item-click="loseEfficacy='0'">未失效</button-tab-item>
         <button-tab-item :selected="loseEfficacy=='1'" @on-item-click="loseEfficacy='1'">已失效</button-tab-item>
@@ -14,7 +14,7 @@
         <span>+</span> 添加资金
       </div> -->
     </div>
-    <div v-if="hasProject=='no'" class="content2">
+    <div v-if="hasProject=='yes'" class="content2">
       <button-tab class="button-tab">
         <button-tab-item :selected="loseEfficacy=='0'" @on-item-click="loseEfficacy='0'">未失效</button-tab-item>
         <button-tab-item :selected="loseEfficacy=='1'" @on-item-click="loseEfficacy='1'">已失效</button-tab-item>
@@ -31,21 +31,21 @@
         <!-- <h3>资金</h3>
         <p>合规对接 量大稳定</p> -->
         <div>
-        <div class="item" v-for="item in 5">
+        <div @click="jumpToDetail(item.mineId)" class="item" v-for="item in mineList">
           <div class="title">
-            <span>中腾堡SJT-BL</span>
-            <span>3天发货</span>
+            <span>{{item.nameAndVersion}}</span>
+            <span>{{item.arrivalTime}} 发货</span>
           </div>
           <div class="item-con">
             <div>
-              <p>49999</p>
+              <p>{{item.price}}</p>
               <span>商品价格(元)</span>
             </div>
             <div>
-              <p>比特币</p>
+              <p>{{getLabel(item.coinType)}}</p>
               <span>币种</span>
             </div>
-            <div>
+            <div class="label">
               <img v-show="item.listStatus==1" src="./img/label_judge.png"/>
               <img v-show="item.listStatus==2" src="./img/label_online.png"/>
             </div>
@@ -60,7 +60,7 @@
         <h3>资产</h3>
         <p>风控审核 多元供给</p>
         <div>
-        <div class="item" v-for="item in assetList.slice(0,showItem01)" @click="jumpTo(1,item.assetId,'0')">
+        <div class="item" v-for="item in mineList.slice(0,showItem01)" @click="jumpTo(1,item.assetId,'0')">
           <div class="left">
             <p>{{item.fundCostRegionFrom}}<span>%</span> 
             - {{item.fundCostRegionTo}}<span>%</span></p>
@@ -81,8 +81,8 @@
           </div>
         </div>
         </div>
-        <div class="seeAll" @click="showItem01=assetList.length">
-          查看全部({{assetList.length}})
+        <div class="seeAll" @click="showItem01=mineList.length">
+          查看全部({{mineList.length}})
         </div>
       </div> -->
       </div>
@@ -92,24 +92,24 @@
         <!-- <h3>资金</h3>
         <p>合规对接 量大稳定</p> -->
         <div>
-        <div class="item" v-for="item in 5">
+        <div @click="jumpToDetail(item.mineId)" class="item" v-for="item in mineListLose">
 
           <img class="img-unpassed" v-show="item.listStatus==3" src="./img/label_unpassed.png"/>
 
           <div class="title">
-            <span>中腾堡SJT-BL</span>
-            <span>3天发货</span>
+            <span>{{item.nameAndVersion}}</span>
+            <span>{{item.arrivalTime}} 发货</span>
           </div>
           <div class="item-con">
             <div>
-              <p>49999</p>
+              <p>{{item.price}}</p>
               <span>商品价格(元)</span>
             </div>
             <div>
-              <p>比特币</p>
+              <p>{{getLabel(item.coinType)}}</p>
               <span>币种</span>
             </div>
-            <div>
+            <div class="label">
               <img v-show="item.listStatus==4" src="./img/label_timeup.png"/>
             </div>
           </div>
@@ -123,7 +123,7 @@
         <h3>资产</h3>
         <p>风控审核 多元供给</p>
         <div>
-        <div class="item" v-for="item in assetListLose.slice(0,showItem11)" @click="jumpTo(1,item.assetId,'1')">
+        <div class="item" v-for="item in mineListLose.slice(0,showItem11)" @click="jumpTo(1,item.assetId,'1')">
           <img class="img-unpassed" v-show="item.listStatus==3" src="./img/label_unpassed.png"/>
       
           <div class="left">
@@ -145,8 +145,8 @@
           </div>
         </div>
         </div>
-        <div class="seeAll" @click="showItem11=assetListLose.length">
-          查看全部({{assetListLose.length}})
+        <div class="seeAll" @click="showItem11=mineListLose.length">
+          查看全部({{mineListLose.length}})
         </div>
       </div> -->
       </div>
@@ -182,10 +182,8 @@ export default {
       hasProject:null,
       loseEfficacy:'0',
       validPeriod:null,
-      assetList:[],
-      fundList:[],
-      assetListLose:[],
-      fundListLose:[],
+      mineList:[],
+      mineListLose:[],
       /* actionsheet */
       show1: false,
       /*menus1: {
@@ -214,25 +212,19 @@ export default {
     }
 
     this.getMyProject();
-    this.getFundList();
-    this.getConfigByParameter();
   },
   methods: {
-    //资金资产类型数字转化为文字
-    getLabel(key,type){
-      var f;
-      if(type=='fund') 
-        f = JSON.parse(localStorage.fundTypeList);
-      else 
-        f = JSON.parse(localStorage.assetTypeList);
+    //币种类型数字转化为文字
+    getLabel(key){
+      var f = JSON.parse(localStorage.coinTypeList);
       for(let i in f){
         if(f[i].key == key) return f[i].label
       }
     },
     jumpToRelease (key) {
-      this.$router.push('/ReleaseFund')
+      this.$router.push('/ReleaseAssets')
     },
-    getConfigByParameter(){
+    /*getConfigByParameter(){
       var self = this;
       Lib.M.ajax({
         url:'/config/getConfigByParameter',
@@ -241,42 +233,33 @@ export default {
         },
         success:function (res) {
           self.validPeriod = res.data[0].value;
-          /*console.log(111111);
-          console.log(self.validPeriod);*/
+          console.log(111111);
+          console.log(self.validPeriod);
         },
         error:function(err){
           console.error(err);
         }
       });
-    },
+    },*/
     /* 查询个人项目 */
     getMyProject(){
       var self = this;
       Lib.M.ajax({
-        url : '/public/userOnListProject',
+        url : '/mine/findMineByUserId',
         data: { userId: localStorage.userId },
         success:function(res){
-          let a = res.data.asset;
-          let f = res.data.fund;
+          let data = res.data;
           if(res.code==200){
-            if(a.length == 0 && f.length == 0){
+            if(data.length == 0){
               self.hasProject = 'no';
             }else{
               self.hasProject = 'yes';
               //区分未失效列表与已失效列表
-              for(let i in a){
-                if(a[i].listStatus == 1 || a[i].listStatus == 2){
-                  self.assetList.push(a[i]);
+              for(let i in data){
+                if(data[i].listStatus == 1 || data[i].listStatus == 2){
+                  self.mineList.push(data[i]);
                 }else{
-                  self.assetListLose.push(a[i]);
-                }
-              }
-
-              for(let i in f){
-                if(f[i].listStatus == 1 || f[i].listStatus == 2){
-                  self.fundList.push(f[i]);
-                }else{
-                  self.fundListLose.push(f[i]);
+                  self.mineListLose.push(data[i]);
                 }
               }
             }
@@ -286,29 +269,15 @@ export default {
         }
       });
     },
-    /* 获取资金资产类型列表 */
-    getFundList(){
-      var self = this;
-      Lib.M.ajax({
-        url : '/info/findAssetAndFundConfig',
-        success:function(res){
-          if(res.code==200){
-            localStorage.fundTypeList=JSON.stringify(res.data.fund);
-            localStorage.assetTypeList = JSON.stringify(res.data.asset);
-          }else{
-            self.$vux.toast.text(res.error, 'middle');
-          }
-        }
-      });
-    },
     //跳转至详情页
-    jumpToDetail(proId,isLose){
+    jumpToDetail(proId){
+      var self = this;
       this.$router.push(
         { 
           path:'/ProjectDetail',
           query:{
             proId:proId,
-            isLose:isLose
+            isLose: self.loseEfficacy
           }
         }
       )
@@ -323,7 +292,7 @@ export default {
 
 <style lang="less" scoped>
   .content{
-    background: #EFEFF4;
+    background: #fff;
   }
 
   .img-unpassed{
@@ -347,7 +316,7 @@ export default {
   }
   .content1{
     box-sizing:border-box;
-    padding-top: 1.5rem;
+    /* padding-top: 1rem; */
     background:url('./img/empty_page.png') no-repeat center;
     background-position:center 7.5rem;
     background-size: 12.22rem 13.625rem;
@@ -381,13 +350,13 @@ export default {
   }
   .content2{
     box-sizing:border-box;
-    padding-top: 1.5rem;
+    /* padding-top: 1rem; */
     padding-bottom: 4.3rem;
   }
   .button-tab{
     width:13.75rem;
     height: 1.6rem;
-    margin:0 auto;
+    margin:1rem auto;
   }
   .fund-item-con,.assets-item-con{
     position:relative;
@@ -417,7 +386,7 @@ export default {
     }
     .item{
       background: #fff;
-      margin-top: 0.5rem;
+      border-top: 0.5rem solid #EFEFF4;
       position:relative;
       padding:0 1rem;
       /*display:flex;
@@ -536,8 +505,25 @@ export default {
       margin-top:0.1rem;
     }
   }
-  .useless .left>p{
-    color:#adb4b8 !important;
+  .label{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    img{
+      width:3rem;
+      height:1.15rem;
+    }
+  }
+  .useless{
+    .title>span:nth-of-type(1){
+      color:#5c7d99 !important;
+    }
+    .title>span:nth-of-type(2){
+      color:#a3a3a3 !important;
+    }
+    .item-con>div>p{
+      color:#adb4b8 !important;
+    }
   }
   .vux-button-group > a.vux-button-tab-item-first {
     border-top-left-radius: 4px;
