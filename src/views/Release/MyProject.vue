@@ -222,7 +222,7 @@ export default {
       }
     },
     jumpToRelease (key) {
-      this.$router.push('/ReleaseAssets')
+      this.$router.push('/Release1')
     },
     /*getConfigByParameter(){
       var self = this;

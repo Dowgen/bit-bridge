@@ -271,7 +271,7 @@ export default {
             productIntroduction : this.productIntroduction
           }
           localStorage.addPdParams = JSON.stringify(addPdParams);
-          this.$router.push({ path: 'Release3' /*, query: { AorF: 'assets' }*/})
+          this.$router.push({ path: 'Release2' /*, query: { AorF: 'assets' }*/})
         /*}*/
       }
     },

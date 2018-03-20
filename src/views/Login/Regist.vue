@@ -103,15 +103,15 @@ export default {
 
         }else{
           /* 先验证短信，然后根据登录方式决定是注册还是更改密码 */
-          if(localStorage.openId!=null && localStorage.openId!='undefined'){
-            if(this.code!=null){
+          // if(localStorage.openId!=null && localStorage.openId!='undefined'){
+          //   if(this.code!=null){
               this.regist();
-            }else{
-              this.$vux.toast.text("请关注51资金资产公众号注册使用本系统", 'middle')
-            }
-          }else{
-            this.$vux.toast.text("请关注'51资金资产'公众号,通过公众号注册", 'middle')
-          }
+          //   }else{
+          //     this.$vux.toast.text("请关注51资金资产公众号注册使用本系统", 'middle')
+          //   }
+          // }else{
+          //   this.$vux.toast.text("请关注'51资金资产'公众号,通过公众号注册", 'middle')
+          // }
         }
       }
     },
@@ -141,7 +141,8 @@ export default {
           phone: self.phoneNum,
           password: sha1(self.password).toUpperCase(),
           cerifyCode: self.verifyCode,
-          openId: localStorage.openId
+          // openId: localStorage.openId
+          openId: 'NoNeedNow'
         },
         success:function(res){
           if(res.code==200){

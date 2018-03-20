@@ -44,7 +44,7 @@ export default {
   },
   mounted(){
     this.myPhone = localStorage.phoneNum;
-    this.getMyInfo();
+    // this.getMyInfo();
     this.getImg();
   },
   methods: {

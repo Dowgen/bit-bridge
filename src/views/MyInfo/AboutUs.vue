@@ -54,7 +54,7 @@ export default {
     
   },
   mounted(){
-    this.getMyInfo();
+    // this.getMyInfo();
   },
   methods: {
     quitToLogin(){
