@@ -1,11 +1,12 @@
 <template>
   <div>
     <div class="content" v-cloak>
-      <swiper loop auto height="12.44rem" dots-position="center">
+<!--       <swiper loop auto height="12.44rem" dots-position="center">
         <swiper-item :key="pic.picUrl" v-for="pic in img_src">
           <img :src="pic.picUrl" @click="linkTo(pic.linkUrl)">
         </swiper-item>
-      </swiper>
+      </swiper> -->
+      <img src="./img/img3_news.png">
       <div class="recommend">
         <p>
           <span>倾力推荐</span>
