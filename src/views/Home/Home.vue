@@ -6,7 +6,7 @@
           <img :src="pic.picUrl" @click="linkTo(pic.linkUrl)">
         </swiper-item>
       </swiper> -->
-      <img src="./img/img3_news.png">
+      <img src="./img/img3_news.png" auto dots-position="center" >
       <div class="recommend">
         <p>
           <span>倾力推荐</span>
